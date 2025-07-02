@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗂️ File Storage & Sharing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: #2c2c2c;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Main Layout with Banners */
+        .main-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            align-items: start;
+        }
+
+        /* Sidebar Banners */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-top: 20px;
+        }
+
+        .banner-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+
+        .banner-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .banner-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .banner-placeholder {
+            width: 100%;
+            height: 120px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            font-size: 2rem;
+        }
+
+        .banner-content {
+            padding: 12px;
+        }
+
+        .banner-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .banner-description {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .banner-cta {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #495057;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .banner-cta:hover {
+            background: #343a40;
+            transform: translateY(-1px);
+        }
+
+        .banner-empty {
+            background: white;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px 10px;
+            text-align: center;
+            color: #adb5bd;
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 20px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .main-description {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Upload Form */
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #764ba2;
+            background: #f0f4ff;
+        }
+
+        .upload-area.has-file {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .form-group {
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #f0f0f0;
+            border-radius: 25px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: none;
+            height: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 25px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .upload-status {
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #666;
+            display: none;
+            text-align: center;
+        }
+
+        .upload-details {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #666;
+            display: none;
+        }
+
+        .upload-details div {
+            margin: 3px 0;
+        }
+
+        /* Success Result */
+        .upload-result {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .share-link {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            user-select: all;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Shared File View */
+        .shared-file-view {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .file-details {
+            margin: 20px 0;
+        }
+
+        .file-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .file-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #667eea;
+            color: #667eea;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #495057;
+            color: #adb5bd;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        /* Loading Animation */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            
+            .sidebar {
+                order: 3;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px 0;
+                gap: 10px;
+            }
+            
+            .banner-item {
+                min-width: 200px;
+                flex-shrink: 0;
+            }
+            
+            .main-content {
+                order: 1;
+                padding-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-card {
+                padding: 30px 20px;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .file-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>🗂️</span>
+                File Storage & Sharing
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Layout with Sidebars -->
+    <div class="main-layout">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            {% if left_banners %}
+                {% for banner in left_banners %}
+                <div class="banner-item" onclick="trackBannerClick({{ banner.id }}, '{{ banner.link_url|safe }}')">
+                    {% if banner.image_path %}
+                        <img src="{{ banner.image_path }}" alt="{{ banner.title }}" class="banner-image">
+                    {% else %}
+                        <div class="banner-placeholder">📢</div>
+                    {% endif %}
+                    <div class="banner-content">
+                        <div class="banner-title">{{ banner.title }}</div>
+                        {% if banner.description %}
+                            <div class="banner-description">{{ banner.description }}</div>
+                        {% endif %}
+                        <a href="#" class="banner-cta" onclick="event.stopPropagation(); trackBannerClick({{ banner.id }}, '{{ banner.link_url|safe }}');">
+                            👀 Xem thêm
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="banner-empty">
+                    Chưa có banner
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-card">
+                {% if error %}
+                <div class="alert alert-error">❌ {{ error }}</div>
+                {% endif %}
+
+                {% if shared_file and show_download %}
+                <!-- Shared File View -->
+                <div class="shared-file-view">
+                    <h2>📁 File được chia sẻ</h2>
+                    
+                    <div class="file-details">
+                        <h3>{{ shared_file.original_name }}</h3>
+                        
+                        <div class="file-info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Loại file</div>
+                                <div class="info-value">
+                                    {% if shared_file.file_type == 'image' %}🖼️ Hình ảnh
+                                    {% elif shared_file.file_type == 'video' %}🎬 Video
+                                    {% elif shared_file.file_type == 'audio' %}🎵 Audio
+                                    {% elif shared_file.file_type == 'document' %}📄 Tài liệu
+                                    {% elif shared_file.file_type == 'archive' %}📦 Archive
+                                    {% else %}📁 Khác{% endif %}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Kích thước</div>
+                                <div class="info-value">{{ shared_file.file_size }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Lượt tải</div>
+                                <div class="info-value">{{ shared_file.download_count }}/{{ shared_file.download_limit }}</div>
+                            </div>
+                        </div>
+                        
+                        {% if shared_file.description %}
+                        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <strong>Mô tả:</strong> {{ shared_file.description }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div style="margin: 25px 0;">
+                        <a href="/download/{{ shared_file.share_code }}" class="btn">📥 Tải xuống ngay</a>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <a href="/" class="btn btn-outline">🔄 Tải file khác</a>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Upload Interface -->
+                <h1 class="main-title">
+                    🗂️ File Storage & Sharing
+                </h1>
+                <p class="main-description">
+                    Tải lên và chia sẻ file dễ dàng, an toàn với link QR code!
+                </p>
+
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Upload Form -->
+                <div id="uploadSection" class="upload-section">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="upload-area" id="uploadArea">
+                            <h3 id="uploadAreaTitle">📁 Kéo thả file vào đây hoặc click để chọn</h3>
+                            <input type="file" id="fileInput" class="file-input">
+                            <p id="uploadAreaSubtext" style="margin-top: 10px; color: #666;">
+                                Hỗ trợ mọi loại file, tối đa {% if admin_settings %}{{ admin_settings.max_size_gb }}{% else %}25{% endif %}GB
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">📝 Mô tả file (tùy chọn)</label>
+                            <textarea id="description" name="description" class="form-input" rows="3" placeholder="Mô tả về file..."></textarea>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        
+                        <div class="upload-status" id="uploadStatus">
+                            Đang chuẩn bị tải lên...
+                        </div>
+
+                        <div class="upload-details" id="uploadDetails">
+                            <div>Tốc độ: <span id="uploadSpeed">-</span></div>
+                            <div>Thời gian còn lại: <span id="uploadETA">-</span></div>
+                            <div>Đã tải: <span id="uploadLoaded">-</span> / <span id="uploadTotal">-</span></div>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button type="submit" id="uploadBtn" class="btn">
+                                <span id="uploadText">🚀 Tải lên và tạo link</span>
+                                <span id="uploadLoading" class="hidden">
+                                    <span class="spinner"></span>Đang tải lên...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Upload Result -->
+                <div id="uploadResult" class="upload-result">
+                    <h3>✅ Tải lên thành công!</h3>
+                    <p><strong>Link chia sẻ của bạn:</strong></p>
+                    <div id="shareLink" class="share-link"></div>
+                    
+                    <div class="qr-code">
+                        <p><strong>📱 QR Code để chia sẻ:</strong></p>
+                        <img id="qrCode" src="" alt="QR Code" style="max-width: 200px;">
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button onclick="copyShareLink()" class="btn btn-outline btn-sm" style="margin-right: 10px;">
+                            📋 Copy Link
+                        </button>
+                        <button onclick="resetUploadForm()" class="btn btn-sm">
+                            🔄 Tải file khác
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            {% if right_banners %}
+                {% for banner in right_banners %}
+                <div class="banner-item" onclick="trackBannerClick({{ banner.id }}, '{{ banner.link_url|safe }}')">
+                    {% if banner.image_path %}
+                        <img src="{{ banner.image_path }}" alt="{{ banner.title }}" class="banner-image">
+                    {% else %}
+                        <div class="banner-placeholder">📢</div>
+                    {% endif %}
+                    <div class="banner-content">
+                        <div class="banner-title">{{ banner.title }}</div>
+                        {% if banner.description %}
+                            <div class="banner-description">{{ banner.description }}</div>
+                        {% endif %}
+                        <a href="#" class="banner-cta" onclick="event.stopPropagation(); trackBannerClick({{ banner.id }}, '{{ banner.link_url|safe }}');">
+                            👀 Xem thêm
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="banner-empty">
+                    Chưa có banner
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 File Storage & Sharing. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let uploadedShareCode = '';
+        let uploadedShareUrl = '';
+        let selectedFile = null;
+        let uploadStartTime = Date.now();
+
+        // Performance config
+        let performanceConfig = {
+            chunkSizeMB: 32,
+            maxConcurrentChunks: 8,
+            enableChunkedUpload: true,
+            bufferSizeKB: 2048,
+            connectionTimeout: 300
+        };
+
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Load performance config
+            try {
+                const response = await fetch('/api/performance-config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    performanceConfig = data.config;
+                    console.log('Performance config loaded:', performanceConfig);
+                }
+            } catch (error) {
+                console.error('Failed to load performance config:', error);
+            }
+            
+            initializeUpload();
+        });
+
+        // Initialize upload functionality
+        function initializeUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const uploadForm = document.getElementById('uploadForm');
+
+            if (!uploadArea || !fileInput || !uploadForm) {
+                console.error('Required elements not found');
+                return;
+            }
+
+            console.log('All elements found, setting up events...');
+
+            // Click to select file
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            // File selection
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelection(files[0]);
+                }
+            });
+
+            // Form submission
+            uploadForm.addEventListener('submit', handleUpload);
+
+            console.log('Upload initialization complete');
+        }
+
+        // Handle file selection with validation
+        function handleFileSelection(file) {
+            if (!file) return;
+            
+            if (!validateFileSize(file)) {
+                return;
+            }
+            
+            selectedFile = file;
+            fileInput.files = createFileList([file]);
+            updateFileDisplay(file);
+            console.log('File validated and selected:', file.name);
+        }
+
+        // Create FileList (for programmatic file setting)
+        function createFileList(files) {
+            const dt = new DataTransfer();
+            files.forEach(file => dt.items.add(file));
+            return dt.files;
+        }
+
+        // Validate file size
+        function validateFileSize(file) {
+            const maxSizeGB = {% if admin_settings %}{{ admin_settings.max_size_gb }}{% else %}25{% endif %};
+            const maxSizeBytes = maxSizeGB * 1024 * 1024 * 1024;
+            
+            if (file.size > maxSizeBytes) {
+                showAlert(`❌ File quá lớn! Tối đa ${maxSizeGB}GB`, 'error');
+                return false;
+            }
+            
+            // Warning for large files
+            if (file.size > 1024 * 1024 * 1024) {
+                const sizeGB = (file.size / 1024 / 1024 / 1024).toFixed(1);
+                showAlert(`⚠️ File ${sizeGB}GB sẽ mất thời gian để tải lên. Vui lòng không đóng trang!`, 'info');
+            }
+            
+            return true;
+        }
+
+        // Update file display
+        function updateFileDisplay(file) {
+            const uploadArea = document.getElementById('uploadArea');
+            const uploadAreaTitle = document.getElementById('uploadAreaTitle');
+            const uploadAreaSubtext = document.getElementById('uploadAreaSubtext');
+
+            if (uploadArea && uploadAreaTitle && uploadAreaSubtext) {
+                uploadArea.classList.add('has-file');
+                uploadAreaTitle.textContent = '📁 File đã chọn';
+                uploadAreaSubtext.innerHTML = `
+                    <strong>${file.name}</strong><br>
+                    Kích thước: ${formatFileSize(file.size)}<br>
+                    <span style="color: #999;">Click để chọn file khác</span>
+                `;
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // Handle form upload
+        async function handleUpload(e) {
+            e.preventDefault();
+            
+            if (!selectedFile) {
+                showAlert('Vui lòng chọn file để tải lên!', 'error');
+                return;
+            }
+
+            console.log('Starting upload for:', selectedFile.name);
+            uploadStartTime = Date.now();
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadText = document.getElementById('uploadText');
+            const uploadLoading = document.getElementById('uploadLoading');
+            
+            // Show loading state
+            if (uploadText && uploadLoading) {
+                uploadText.classList.add('hidden');
+                uploadLoading.classList.remove('hidden');
+            }
+            if (uploadBtn) {
+                uploadBtn.disabled = true;
+            }
+
+            try {
+                let result;
+                
+                // Use chunked upload for large files or if enabled
+                if (performanceConfig.enableChunkedUpload && selectedFile.size > 100 * 1024 * 1024) {
+                    console.log('Using chunked upload for large file');
+                    const uploader = new HighSpeedUploader(selectedFile);
+                    result = await uploader.upload();
+                } else {
+                    console.log('Using regular upload');
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    
+                    const descriptionInput = document.getElementById('description');
+                    if (descriptionInput) {
+                        formData.append('description', descriptionInput.value || '');
+                    }
+
+                    result = await uploadWithProgress(formData);
+                }
+                
+                if (result.success) {
+                    console.log('Upload successful:', result);
+                    handleUploadSuccess(result);
+                } else {
+                    throw new Error(result.error || 'Upload failed');
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                hideProgress();
+                showAlert('❌ Lỗi: ' + error.message, 'error');
+            } finally {
+                // Reset loading state
+                if (uploadText && uploadLoading) {
+                    uploadText.classList.remove('hidden');
+                    uploadLoading.classList.add('hidden');
+                }
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                }
+            }
+        }
+
+        // High-speed chunked uploader
+        class HighSpeedUploader {
+            constructor(file) {
+                this.file = file;
+                this.chunkSize = performanceConfig.chunkSizeMB * 1024 * 1024;
+                this.maxConcurrent = performanceConfig.maxConcurrentChunks;
+                this.totalChunks = Math.ceil(file.size / this.chunkSize);
+                this.fileId = this.generateUUID();
+                this.uploadedChunks = 0;
+                this.activeUploads = 0;
+                this.startTime = Date.now();
+            }
+
+            async upload() {
+                console.log(`Starting chunked upload: ${this.totalChunks} chunks, ${this.maxConcurrent} concurrent`);
+                
+                return new Promise((resolve, reject) => {
+                    this.resolve = resolve;
+                    this.reject = reject;
+                    
+                    // Start initial batch
+                    for (let i = 0; i < Math.min(this.maxConcurrent, this.totalChunks); i++) {
+                        this.uploadChunk(i);
+                    }
+                });
+            }
+
+            async uploadChunk(chunkIndex) {
+                if (chunkIndex >= this.totalChunks) return;
+                
+                this.activeUploads++;
+                
+                try {
+                    const start = chunkIndex * this.chunkSize;
+                    const end = Math.min(start + this.chunkSize, this.file.size);
+                    const chunk = this.file.slice(start, end);
+                    
+                    const formData = new FormData();
+                    formData.append('chunk', chunk);
+                    formData.append('chunkNumber', chunkIndex);
+                    formData.append('totalChunks', this.totalChunks);
+                    formData.append('fileId', this.fileId);
+                    formData.append('filename', this.file.name);
+                    
+                    const response = await fetch('/upload/chunked', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.uploadedChunks++;
+                        this.updateProgress();
+                        
+                        if (result.completed) {
+                            this.resolve(result);
+                            return;
+                        }
+                        
+                        // Upload next chunk
+                        const nextChunk = chunkIndex + this.maxConcurrent;
+                        if (nextChunk < this.totalChunks) {
+                            this.uploadChunk(nextChunk);
+                        }
+                    } else {
+                        throw new Error(result.error);
+                    }
+                    
+                } catch (error) {
+                    this.reject(error);
+                } finally {
+                    this.activeUploads--;
+                }
+            }
+
+            updateProgress() {
+                const progress = Math.round((this.uploadedChunks / this.totalChunks) * 100);
+                const elapsed = (Date.now() - this.startTime) / 1000;
+                const uploadedBytes = this.uploadedChunks * this.chunkSize;
+                const speed = (uploadedBytes / elapsed / 1024 / 1024).toFixed(2);
+                
+                const remaining = this.totalChunks - this.uploadedChunks;
+                const eta = remaining > 0 ? (remaining * elapsed / this.uploadedChunks) : 0;
+                const etaMin = Math.floor(eta / 60);
+                const etaSec = Math.floor(eta % 60);
+                
+                updateProgress(
+                    progress, 
+                    `Chunked upload ${progress}% - ${speed} MB/s - Còn ${etaMin}:${etaSec.toString().padStart(2, '0')} (${this.uploadedChunks}/${this.totalChunks})`
+                );
+                
+                // Update detailed info
+                updateUploadDetails(speed, etaMin, etaSec, uploadedBytes, this.file.size);
+            }
+
+            generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+        }
+
+        // Regular upload with progress tracking
+        function uploadWithProgress(formData) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                
+                // Upload progress
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 90);
+                        const elapsed = (Date.now() - uploadStartTime) / 1000;
+                        const speed = (e.loaded / elapsed / 1024 / 1024).toFixed(2);
+                        
+                        const remaining = e.total - e.loaded;
+                        const eta = remaining / (e.loaded / elapsed);
+                        const etaMin = Math.floor(eta / 60);
+                        const etaSec = Math.floor(eta % 60);
+                        
+                        updateProgress(
+                            percentComplete, 
+                            `Upload ${percentComplete}% - ${speed} MB/s - Còn ${etaMin}:${etaSec.toString().padStart(2, '0')}`
+                        );
+                        
+                        updateUploadDetails(speed, etaMin, etaSec, e.loaded, e.total);
+                    }
+                });
+
+                // Upload complete
+                xhr.addEventListener('load', function() {
+                    try {
+                        if (xhr.status === 200) {
+                            const response = JSON.parse(xhr.responseText);
+                            updateProgress(100, 'Hoàn thành!');
+                            setTimeout(() => resolve(response), 500);
+                        } else if (xhr.status === 413) {
+                            reject(new Error('File quá lớn. Vui lòng chọn file nhỏ hơn.'));
+                        } else {
+                            const response = JSON.parse(xhr.responseText);
+                            reject(new Error(response.error || `Lỗi server: ${xhr.status}`));
+                        }
+                    } catch (parseError) {
+                        reject(new Error('Lỗi xử lý phản hồi từ server'));
+                    }
+                });
+
+                xhr.addEventListener('error', function() {
+                    reject(new Error('Lỗi kết nối mạng'));
+                });
+
+                xhr.addEventListener('timeout', function() {
+                    reject(new Error('Tải lên quá thời gian cho phép'));
+                });
+
+                // Start upload
+                xhr.open('POST', '/upload');
+                xhr.timeout = performanceConfig.connectionTimeout * 1000;
+                xhr.send(formData);
+            });
+        }
+
+        // Handle successful upload
+        function handleUploadSuccess(data) {
+            uploadedShareCode = data.share_code;
+            uploadedShareUrl = data.share_url;
+            
+            // Update result display
+            const shareLink = document.getElementById('shareLink');
+            if (shareLink) {
+                shareLink.textContent = data.share_url;
+            }
+            
+            const qrCode = document.getElementById('qrCode');
+            if (data.qr_code && qrCode) {
+                qrCode.src = `data:image/png;base64,${data.qr_code}`;
+            }
+            
+            // Show result, hide upload form
+            setTimeout(() => {
+                hideProgress();
+                
+                const uploadSection = document.getElementById('uploadSection');
+                const uploadResult = document.getElementById('uploadResult');
+                
+                if (uploadSection) uploadSection.style.display = 'none';
+                if (uploadResult) uploadResult.style.display = 'block';
+                
+                showAlert('✅ Tải lên thành công!', 'success');
+            }, 1000);
+        }
+
+        // Show/hide progress
+        function updateProgress(percent, status) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const uploadStatus = document.getElementById('uploadStatus');
+            
+            if (progressContainer && progressBar && uploadStatus) {
+                progressContainer.style.display = 'block';
+                uploadStatus.style.display = 'block';
+                progressBar.style.width = percent + '%';
+                uploadStatus.textContent = status;
+            }
+        }
+
+        function updateUploadDetails(speed, etaMin, etaSec, loaded, total) {
+            const uploadDetails = document.getElementById('uploadDetails');
+            const uploadSpeed = document.getElementById('uploadSpeed');
+            const uploadETA = document.getElementById('uploadETA');
+            const uploadLoaded = document.getElementById('uploadLoaded');
+            const uploadTotal = document.getElementById('uploadTotal');
+            
+            if (uploadDetails && uploadSpeed && uploadETA && uploadLoaded && uploadTotal) {
+                uploadDetails.style.display = 'block';
+                uploadSpeed.textContent = `${speed} MB/s`;
+                uploadETA.textContent = `${etaMin}:${etaSec.toString().padStart(2, '0')}`;
+                uploadLoaded.textContent = formatFileSize(loaded);
+                uploadTotal.textContent = formatFileSize(total);
+            }
+        }
+
+        function hideProgress() {
+            const progressContainer = document.getElementById('progressContainer');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadDetails = document.getElementById('uploadDetails');
+            
+            if (progressContainer) progressContainer.style.display = 'none';
+            if (uploadStatus) uploadStatus.style.display = 'none';
+            if (uploadDetails) uploadDetails.style.display = 'none';
+        }
+
+        // Show alert messages
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            if (!alertContainer) return;
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Copy share link
+        function copyShareLink() {
+            if (!uploadedShareUrl) {
+                showAlert('❌ Không có link để copy!', 'error');
+                return;
+            }
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(uploadedShareUrl).then(() => {
+                    showAlert('📋 Đã copy link chia sẻ!', 'success');
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(uploadedShareUrl);
+                });
+            } else {
+                fallbackCopyTextToClipboard(uploadedShareUrl);
+            }
+        }
+
+        // Fallback copy method
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showAlert('📋 Đã copy link chia sẻ!', 'success');
+            } catch (err) {
+                showAlert('❌ Không thể copy link!', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Reset upload form
+        function resetUploadForm() {
+            // Reset form
+            const uploadForm = document.getElementById('uploadForm');
+            if (uploadForm) {
+                uploadForm.reset();
+            }
+            
+            // Reset file selection
+            selectedFile = null;
+            
+            // Reset UI
+            const uploadSection = document.getElementById('uploadSection');
+            const uploadResult = document.getElementById('uploadResult');
+            const uploadArea = document.getElementById('uploadArea');
+            const uploadAreaTitle = document.getElementById('uploadAreaTitle');
+            const uploadAreaSubtext = document.getElementById('uploadAreaSubtext');
+            
+            if (uploadSection) uploadSection.style.display = 'block';
+            if (uploadResult) uploadResult.style.display = 'none';
+            
+            if (uploadArea) {
+                uploadArea.classList.remove('has-file');
+            }
+            
+            if (uploadAreaTitle) {
+                uploadAreaTitle.textContent = '📁 Kéo thả file vào đây hoặc click để chọn';
+            }
+            
+            if (uploadAreaSubtext) {
+                uploadAreaSubtext.innerHTML = 'Hỗ trợ mọi loại file, tối đa {% if admin_settings %}{{ admin_settings.max_size_gb }}{% else %}25{% endif %}GB';
+            }
+            
+            hideProgress();
+            
+            // Reset variables
+            uploadedShareCode = '';
+            uploadedShareUrl = '';
+            
+            console.log('Form reset complete');
+        }
+
+        // Banner click tracking
+        async function trackBannerClick(bannerId, linkUrl) {
+            try {
+                fetch(`/banner/click/${bannerId}`, { method: 'GET' });
+                if (linkUrl) {
+                    window.open(linkUrl, '_blank');
+                }
+            } catch (error) {
+                console.error('Error tracking banner click:', error);
+                if (linkUrl) {
+                    window.open(linkUrl, '_blank');
+                }
+            }
+        }
+
+        // Debug function
+        function debugUpload() {
+            console.log('Debug info:');
+            console.log('Selected file:', selectedFile);
+            console.log('Performance config:', performanceConfig);
+            console.log('Upload area:', document.getElementById('uploadArea'));
+            console.log('File input:', document.getElementById('fileInput'));
+            console.log('Upload form:', document.getElementById('uploadForm'));
+        }
+
+        // Expose debug function globally for testing
+        window.debugUpload = debugUpload;
+
+        console.log('All JavaScript loaded successfully');
+    </script>
+</body>
+</html>
